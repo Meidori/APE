@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 
+import matplotlib.pyplot as plt
+
 
 class Parser:
     def __init__(self):
@@ -21,7 +23,7 @@ class Parser:
         self.__get_rows()
         for row in self.rows:
             date_cell = row.find('time')
-            date = date_cell.text if date_cell else "Дата не найдена"
+            date = date_cell.text
 
             price_cells = row.find_all('td')
             price = price_cells[1].text if len(price_cells) > 1 else "Цена не найдена"
@@ -29,10 +31,50 @@ class Parser:
             print(f"Дата: {date}, Цена: {price}")
 
 
+    def __get_arr_dates(self):
+        self.__get_rows()
+        dates = []
+        for row in self.rows:
+            date_cell = row.find('time')
+            dates.append(date_cell.text)
+
+        return dates
+
+
+    def __get_arr_prices(self):
+        self.__get_rows()
+        prices = []
+        for row in self.rows:
+            price_cells = row.find_all('td')
+            price_cell = price_cells[1].text.replace(',', '.')
+            prices.append(float(price_cell))
+
+        return prices
+
+            
+    def print_graph(self): 
+        dates = self.__get_arr_dates()  
+        prices = self.__get_arr_prices()  
+
+        plt.plot(dates, prices, marker='o')  
+        
+        plt.xlabel("Date")
+        plt.ylabel("Price")
+        plt.legend(["Цена"])
+
+        plt.xticks(rotation=-90)
+        
+        plt.savefig("graph_prac1.png")
+        print("График сохранен как graph_prac1.png")
+        # plt.show()
+        
+    
 def main():
     pars = Parser()
     print(f"{pars.get_header().text}\n")
-    pars.print_date_and_price()
+    
+    # pars.print_date_and_price()
+    pars.print_graph()
 
 
 if __name__ == "__main__":
