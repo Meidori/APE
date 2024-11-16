@@ -20,7 +20,7 @@ def get_info(url):
 
 
 def main():
-    url = input("URL: ")
+    url = "https://python.org/"
     info = get_info(url)
     for key, value in info.items():
         print(f"{key}: {value}")
